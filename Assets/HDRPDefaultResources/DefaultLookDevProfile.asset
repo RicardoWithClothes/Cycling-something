@@ -985,7 +985,8 @@ MonoBehaviour:
   active: 1
   diffusionProfiles:
     m_OverrideState: 1
-    m_Value: []
+    m_Value:
+    - {fileID: 11400000, guid: a4f9b0b21cfa10140b76854ccb395dcf, type: 2}
 --- !u!114 &414985360475563305
 MonoBehaviour:
   m_ObjectHideFlags: 3
