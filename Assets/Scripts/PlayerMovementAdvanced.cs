@@ -31,6 +31,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
     public KeyCode crouchKey = KeyCode.LeftControl; 
+    public KeyCode resetKey = KeyCode.R;
 
     [Header("Ground Check")]
     public float playerHeight;
