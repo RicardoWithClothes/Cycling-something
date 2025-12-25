@@ -1,11 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-using static PlayerMovementAdvanced;
 
 public class CameraHeadBob : MonoBehaviour
 {
-
     [Range(0.01f, 0.1f)]
     public float baseAmount = 0.07f;
 
@@ -16,8 +14,9 @@ public class CameraHeadBob : MonoBehaviour
     public float Smooth = 10.0f;
 
     private Vector3 originalLocalPosition;
-    private Vector3 velocity = Vector3.zero;
-    private PlayerMovementAdvanced playerMovement;
+
+    // CHANGE 1: Reference the NEW controller
+    private PlayerController playerController;
 
     public UnityEvent onFootStep;
     float Sin;
@@ -26,7 +25,9 @@ public class CameraHeadBob : MonoBehaviour
     void Start()
     {
         originalLocalPosition = transform.localPosition;
-        playerMovement = UnityEngine.Object.FindFirstObjectByType<PlayerMovementAdvanced>(); // Explicitly specify UnityEngine.Object
+
+        // CHANGE 2: Find the new script
+        playerController = UnityEngine.Object.FindFirstObjectByType<PlayerController>();
     }
 
     void Update()
@@ -34,28 +35,35 @@ public class CameraHeadBob : MonoBehaviour
         CheckForHeadbobTrigger();
         StopHeadBob();
     }
+
     private void CheckForHeadbobTrigger()
     {
-        if (playerMovement == null) return;
+        if (playerController == null) return;
 
+        // Check input magnitude (are we trying to move?)
         float inputMagnitude = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).magnitude;
 
-        // Fix: Obtain a reference to the PlayerMovementAdvanced instance
-        if (inputMagnitude > 0 && !playerMovement.IsCrouching && playerMovement.grounded)
+        // CHANGE 3: Update variable names to match the new system
+        // We use the helper property "IsCrouching" we just added
+        if (inputMagnitude > 0 && !playerController.IsCrouching && playerController.isGrounded)
         {
             StartHeadBob();
         }
     }
+
     private Vector3 StartHeadBob()
     {
-        float moveSpeed = playerMovement.moveSpeed;
-        float dynamicFrequency = baseFrequency * (moveSpeed / playerMovement.walkSpeed);
-        float dynamicAmount = baseAmount * (moveSpeed / playerMovement.walkSpeed);
+        // CHANGE 4: Get real velocity and stats from the ScriptableObject
+        float actualSpeed = playerController.CurrentSpeed;
+        float baseWalkSpeed = playerController.stats.walkSpeed;
 
+        float dynamicFrequency = baseFrequency * (actualSpeed / baseWalkSpeed);
+        float dynamicAmount = baseAmount * (actualSpeed / baseWalkSpeed);
 
         Vector3 pos = Vector3.zero;
         pos.y += Mathf.Lerp(pos.y, Mathf.Sin(Time.time * dynamicFrequency) * dynamicAmount * 1.4f, Smooth * Time.deltaTime);
         pos.x += Mathf.Lerp(pos.x, Mathf.Cos(Time.time * dynamicFrequency / 2f) * dynamicAmount * 1.6f, Smooth * Time.deltaTime);
+
         transform.localPosition += pos;
 
         Sin = Mathf.Sin(Time.time * dynamicFrequency);
@@ -71,6 +79,7 @@ public class CameraHeadBob : MonoBehaviour
         }
         return pos;
     }
+
     private void StopHeadBob()
     {
         if (transform.localPosition == originalLocalPosition) return;
