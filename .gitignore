@@ -71,9 +71,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-/Assets/FootStep Surface Reader
-/Assets/HDRPDefaultTesources
-/Assets/TextMesh Pro
-/Assets/TerrainSampleAssets
-/Assets/Electric Torch
-/Assets/Thirdparty
+# Added by dev. (me)

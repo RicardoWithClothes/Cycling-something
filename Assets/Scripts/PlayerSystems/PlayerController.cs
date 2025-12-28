@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     public PlayerState_Walk WalkState;
     public PlayerState_Sprint SprintState;
     public PlayerState_Crouch CrouchState;
-    public PlayerState_Slide SlideState;
     public PlayerState_Air AirState;
 
     // Variables shared across states
@@ -44,7 +43,6 @@ public class PlayerController : MonoBehaviour
         SprintState = new PlayerState_Sprint(this);
         CrouchState = new PlayerState_Crouch(this);
         AirState = new PlayerState_Air(this);
-        SlideState = new PlayerState_Slide(this);
     }
 
     private void Start()

@@ -18,11 +18,6 @@ public class PlayerStatsSO : ScriptableObject
     public float crouchYScale = 0.5f;
     public float startYScale = 1f;
 
-    [Header("Sliding")]
-    public float maxSlideTime = 0.75f;
-    public float slideForce = 200f;
-    public float slideYScale = 0.5f;
-
     [Header("Ground Detection")]
     public float playerHeight = 2f;
     public LayerMask whatIsGround;

@@ -57,10 +57,6 @@ public class PlayerState_Sprint : PlayerBaseState
         if (!ctx.input.SprintHeld && ctx.isGrounded)
             ctx.SwitchState(ctx.WalkState);
 
-        // CHANGE: If sprinting and you press Crouch, go to SLIDE, not Crouch
-        if (ctx.input.CrouchTriggered && ctx.isGrounded)
-            ctx.SwitchState(ctx.SlideState);
-
         if (ctx.input.JumpTriggered && ctx.readyToJump && ctx.isGrounded)
             ctx.DoJump();
 
@@ -137,64 +133,4 @@ public class PlayerState_Air : PlayerBaseState
         ctx.MovePlayer(ctx.stats.walkSpeed);
     }
     public override void Exit() { }
-}
-// 6. SLIDING STATE
-public class PlayerState_Slide : PlayerBaseState
-{
-    private float slideTimer;
-
-    public PlayerState_Slide(PlayerController currentContext) : base(currentContext) { }
-
-    public override void Enter()
-    {
-        ctx.ChangeScale(ctx.stats.slideYScale);
-        ctx.AddDownForce(5f);
-        slideTimer = ctx.stats.maxSlideTime;
-    }
-
-    public override void Update()
-    {
-        slideTimer -= Time.deltaTime;
-
-        // Stop sliding if: Timer runs out OR Player lets go of key
-        if (slideTimer <= 0 || !ctx.input.CrouchHeld)
-        {
-            if (ctx.input.CrouchHeld)
-                ctx.SwitchState(ctx.CrouchState); // Go to crouch if still holding
-            else
-                ctx.SwitchState(ctx.WalkState);   // Stand up if let go
-        }
-
-        if (ctx.input.JumpTriggered && ctx.readyToJump && ctx.isGrounded)
-        {
-            ctx.DoJump(); // Allow slide-jumping
-                          // The jump function handles the transition to air automatically via physics
-        }
-    }
-
-    public override void FixedUpdate()
-    {
-        // Sliding Physics (Based on your old script)
-        // We calculate direction based on input, or forward if no input
-        Vector3 inputDir = ctx.orientation.forward * ctx.input.Vertical + ctx.orientation.right * ctx.input.Horizontal;
-
-        // If no input, slide forward
-        if (inputDir == Vector3.zero) inputDir = ctx.orientation.forward;
-
-        // Apply Slide Force
-        // Note: We use AddForce with ForceMode.Force for continuous push, 
-        // or you can use ForceMode.Impulse in Enter() for a single burst.
-        // Your script used ForceMode.Force in FixedUpdate, so we keep that.
-
-        // Check for slopes using the helper we made
-        if (ctx.OnSlope())
-            ctx.rb.AddForce(ctx.GetSlopeMoveDirection(inputDir) * ctx.stats.slideForce, ForceMode.Force);
-        else
-            ctx.rb.AddForce(inputDir.normalized * ctx.stats.slideForce, ForceMode.Force);
-    }
-
-    public override void Exit()
-    {
-        ctx.ChangeScale(ctx.stats.startYScale);
-    }
 }
